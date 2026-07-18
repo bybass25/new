@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bingwa Sokoni - Premium Digital Platform</title>
+    <title>Bingwa Sokoni - Premium Platform</title>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
@@ -284,6 +284,37 @@
             font-weight: 900;
             cursor: pointer;
             text-decoration: underline;
+        }
+
+        /* PERMISSION BANNER */
+        .permission-banner {
+            background: var(--gold);
+            color: var(--black);
+            padding: 12px 20px;
+            border-radius: 10px;
+            margin-bottom: 16px;
+            display: none;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            flex-wrap: wrap;
+            font-weight: 700;
+        }
+        .permission-banner.show {
+            display: flex;
+        }
+        .permission-banner .btn-allow {
+            padding: 8px 20px;
+            border-radius: 8px;
+            border: none;
+            background: var(--black);
+            color: var(--white);
+            font-weight: 900;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .permission-banner .btn-allow:hover {
+            transform: scale(1.05);
         }
 
         /* DASHBOARD */
@@ -704,7 +735,7 @@
         <div class="sidebar-header">
             <div class="avatar" id="sideAvatar">B</div>
             <h3 id="sideName">Bingwa Member</h3>
-            <p>⭐ VIP Customer</p>
+            <p id="sideEmail">user@email.com</p>
         </div>
 
         <div class="nav-item active" data-page="dashboard" onclick="showPage('dashboard')">
@@ -753,8 +784,8 @@
         <div id="loginPage" class="auth-container">
             <h2>Welcome Back</h2>
             <p class="sub">Login to your account</p>
-            <input type="email" id="loginEmail" placeholder="Email" value="test@bingwa.com">
-            <input type="password" id="loginPassword" placeholder="Password" value="password123">
+            <input type="email" id="loginEmail" placeholder="Email">
+            <input type="password" id="loginPassword" placeholder="Password">
             <button class="btn-primary" onclick="handleLogin()">Login</button>
             <div class="auth-link">Don't have an account? <a onclick="showAuth('register')">Register</a></div>
         </div>
@@ -774,6 +805,18 @@
 
     <!-- APP -->
     <div id="appContainer" style="display:none;">
+
+        <!-- PERMISSION BANNER -->
+        <div class="container">
+            <div class="permission-banner" id="permissionBanner">
+                <span><i class="fas fa-shield-alt"></i> Allow notifications and SMS detection for real-time updates</span>
+                <div>
+                    <button class="btn-allow" onclick="requestPermissions()">Allow</button>
+                    <button class="btn-allow" style="background:transparent;color:var(--white);border:2px solid var(--white);" onclick="dismissPermissions()">Later</button>
+                </div>
+            </div>
+        </div>
+
         <div class="container">
 
             <!-- DASHBOARD -->
@@ -783,25 +826,25 @@
                         <div class="profile-avatar" id="dashAvatar">B</div>
                         <div class="profile-info">
                             <h2 id="dashName">Bingwa Member</h2>
-                            <p>Premium Account • <span class="vip">⭐ VIP Customer</span></p>
+                            <p id="dashEmail">user@email.com</p>
                         </div>
                     </div>
                 </div>
 
                 <div class="card">
                     <div class="balance-label">💰 Wallet Balance</div>
-                    <div class="balance" id="walletBalance">KES 12,580.00</div>
+                    <div class="balance" id="walletBalance">KES 0.00</div>
                 </div>
 
                 <div class="card">
                     <div class="stats-grid">
-                        <div class="stat-item"><div class="number white" id="statTotal">47</div><div class="label">Total</div>
+                        <div class="stat-item"><div class="number white" id="statTotal">0</div><div class="label">Total</div>
                         </div>
-                        <div class="stat-item"><div class="number gold" id="statActive">32</div><div class="label">Active</div>
+                        <div class="stat-item"><div class="number gold" id="statActive">0</div><div class="label">Active</div>
                         </div>
-                        <div class="stat-item"><div class="number orange" id="statPending">8</div><div class="label">Pending</div>
+                        <div class="stat-item"><div class="number orange" id="statPending">0</div><div class="label">Pending</div>
                         </div>
-                        <div class="stat-item"><div class="number red" id="statExpiring">7</div><div class="label">Expiring</div>
+                        <div class="stat-item"><div class="number red" id="statExpiring">0</div><div class="label">Expiring</div>
                         </div>
                     </div>
                 </div>
@@ -822,9 +865,7 @@
                         <table>
                             <thead><tr><th>Date</th><th>Service</th><th>Amount</th><th>Status</th></tr></thead>
                             <tbody id="recentTbody">
-                                <tr><td>18 July 2026</td><td>Data Bundle 2GB</td><td>KES 110</td><td><span class="status-success">✅ Success</span></td></tr>
-                                <tr><td>17 July 2026</td><td>Airtime</td><td>KES 200</td><td><span class="status-success">✅ Success</span></td></tr>
-                                <tr><td>16 July 2026</td><td>SMS Bundle</td><td>KES 100</td><td><span class="status-pending">⏳ Pending</span></td></tr>
+                                <tr><td colspan="4" style="text-align:center;color:var(--white-darker);padding:20px;">No transactions yet</td></tr>
                             </tbody>
                         </table>
                     </div>
@@ -833,9 +874,7 @@
                 <div class="card">
                     <div class="card-title"><i class="fas fa-bell"></i> Notifications</div>
                     <div id="notifList">
-                        <div class="notice"><i class="fas fa-check-circle"></i> Payment Successful - Data Bundle <span class="time">2 min ago</span></div>
-                        <div class="notice"><i class="fas fa-check-circle"></i> Bundle Activated - SMS 1000 <span class="time">1 hour ago</span></div>
-                        <div class="notice"><i class="fas fa-gift"></i> New Promotion: 20% off Data <span class="time">3 hours ago</span></div>
+                        <div style="text-align:center;color:var(--white-darker);padding:20px;">No notifications</div>
                     </div>
                 </div>
             </div>
@@ -875,21 +914,12 @@
             <div class="page" id="page-messages">
                 <div class="card">
                     <div class="card-title"><i class="fas fa-envelope"></i> Message Detection</div>
-                    <p style="color:var(--white-darker);margin-bottom:12px;">Detected SMS messages will appear here automatically.</p>
+                    <p style="color:var(--white-darker);margin-bottom:12px;">Real-time SMS messages detected from your phone.</p>
                     <div id="messagesList">
-                        <div class="message-box">
-                            <span class="sender">📱 +254 712 345 678</span>
-                            <span class="time">2 min ago</span>
-                            <div class="body">KES 5 received. Package: SMS20 activated.</div>
-                        </div>
-                        <div class="message-box">
-                            <span class="sender">📱 +254 723 456 789</span>
-                            <span class="time">15 min ago</span>
-                            <div class="body">KES 20 received. Package: DATA250 activated.</div>
-                        </div>
+                        <div style="text-align:center;color:var(--white-darker);padding:20px;">No messages detected yet</div>
                     </div>
                     <button onclick="simulateMessage()" style="margin-top:10px;padding:10px 20px;border-radius:8px;border:2px solid var(--white);background:transparent;color:var(--white);font-weight:700;cursor:pointer;">
-                        <i class="fas fa-sync"></i> Simulate New Message
+                        <i class="fas fa-sync"></i> Simulate Message
                     </button>
                 </div>
             </div>
@@ -907,7 +937,9 @@
                     <div class="table-wrap">
                         <table>
                             <thead><tr><th>Date</th><th>Package</th><th>Amount</th><th>Status</th></tr></thead>
-                            <tbody id="historyTbody"></tbody>
+                            <tbody id="historyTbody">
+                                <tr><td colspan="4" style="text-align:center;color:var(--white-darker);padding:20px;">No history</td></tr>
+                            </tbody>
                         </table>
                     </div>
                 </div>
@@ -920,19 +952,19 @@
                     <div style="text-align:center;padding:16px 0;">
                         <div style="width:72px;height:72px;border-radius:50%;background:var(--white);color:var(--black);display:flex;align-items:center;justify-content:center;font-size:32px;font-weight:900;margin:0 auto 10px;" id="profAvatar">B</div>
                         <h3 style="color:var(--white);font-size:20px;" id="profName">Bingwa Member</h3>
-                        <p style="color:var(--white-darker);" id="profEmail">bingwa@email.com</p>
+                        <p style="color:var(--white-darker);" id="profEmail">user@email.com</p>
                         <p style="color:var(--white-darker);" id="profPhone">+254 700 000 000</p>
                         <p style="color:var(--gold);margin-top:6px;font-weight:900;">⭐ VIP Customer</p>
                     </div>
                     <div style="margin-top:12px;">
                         <div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.06);">
-                            <span>Member Since</span><span style="color:var(--white);font-weight:900;">Jan 2026</span>
+                            <span>Member Since</span><span style="color:var(--white);font-weight:900;" id="memberSince">-</span>
                         </div>
                         <div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.06);">
-                            <span>Total Purchases</span><span style="color:var(--white);font-weight:900;">47</span>
+                            <span>Total Purchases</span><span style="color:var(--white);font-weight:900;" id="totalPurchases">0</span>
                         </div>
                         <div style="display:flex;justify-content:space-between;padding:10px 0;">
-                            <span>Reward Points</span><span style="color:var(--white);font-weight:900;">1,280</span>
+                            <span>Reward Points</span><span style="color:var(--white);font-weight:900;" id="rewardPoints">0</span>
                         </div>
                     </div>
                 </div>
@@ -960,9 +992,9 @@
                     </button>
                 </div>
                 <div class="card">
-                    <div class="toggle-wrap"><span>🔔 Purchase Alerts</span><label class="toggle"><input type="checkbox" checked><span class="slider"></span></label></div>
-                    <div class="toggle-wrap"><span>⏰ Expiry Reminders</span><label class="toggle"><input type="checkbox" checked><span class="slider"></span></label></div>
-                    <div class="toggle-wrap"><span>📢 Promotional Offers</span><label class="toggle"><input type="checkbox" checked><span class="slider"></span></label></div>
+                    <div class="toggle-wrap"><span>🔔 Purchase Alerts</span><label class="toggle"><input type="checkbox" checked id="togglePurchase"><span class="slider"></span></label></div>
+                    <div class="toggle-wrap"><span>⏰ Expiry Reminders</span><label class="toggle"><input type="checkbox" checked id="toggleExpiry"><span class="slider"></span></label></div>
+                    <div class="toggle-wrap"><span>📢 Promotional Offers</span><label class="toggle"><input type="checkbox" checked id="togglePromo"><span class="slider"></span></label></div>
                 </div>
             </div>
 
@@ -971,43 +1003,58 @@
         <footer>© 2026 BINGWA SOKONI PREMIUM DIGITAL PLATFORM</footer>
     </div>
 
+    <!-- ============================================
+    JAVASCRIPT - COMPLETE WITH SUPABASE
+    ============================================ -->
     <script>
         // ============================================
-        // DATA
+        // SUPABASE CONFIG
         // ============================================
-        const packagesData = [
-            { name: 'Data 250MB 24hrs', code: 'DATA250', amount: 20, sms: 250, category: 'data', ussd: '*180*20#' },
-            { name: 'Data 1.25GB Till Midnight', code: 'DATA1_25G', amount: 55, sms: 1250, category: 'data', ussd: '*180*55#' },
-            { name: 'Data 1GB 1hr', code: 'DATA1G_1HR', amount: 19, sms: 1024, category: 'data', ussd: '*180*19#' },
-            { name: 'Data 1GB 24hrs', code: 'DATA1G_24H', amount: 99, sms: 1024, category: 'data', ussd: '*180*99#' },
-            { name: 'Data 2GB 24hrs', code: 'DATA2G_24H', amount: 110, sms: 2048, category: 'data', ussd: '*180*110#' },
-            { name: 'Data 1.5GB 3hrs', code: 'DATA1_5G_3H', amount: 50, sms: 1536, category: 'data', ussd: '*180*50#' },
-            { name: 'Data 6GB 7days', code: 'DATA6G_7D', amount: 700, sms: 6144, category: 'data', ussd: '*180*700#' },
-            { name: 'Data 2.5GB 7days', code: 'DATA2_5G_7D', amount: 300, sms: 2560, category: 'data', ussd: '*180*300#' },
-            { name: 'Data 10GB 30days', code: 'DATA10G_30D', amount: 1001, sms: 10240, category: 'data', ussd: '*180*1001#' },
-            { name: 'SMS 20 24hrs', code: 'SMS20', amount: 5, sms: 20, category: 'sms', ussd: '*180*5#' },
-            { name: 'SMS 200 24hrs', code: 'SMS200', amount: 10, sms: 200, category: 'sms', ussd: '*180*10#' },
-            { name: 'SMS 100 7days', code: 'SMS100_7D', amount: 21, sms: 100, category: 'sms', ussd: '*180*21#' },
-            { name: 'SMS 1000 7days', code: 'SMS1000_7D', amount: 30, sms: 1000, category: 'sms', ussd: '*180*30#' },
-            { name: 'SMS 1500 30days', code: 'SMS1500_30D', amount: 101, sms: 1500, category: 'sms', ussd: '*180*101#' },
-            { name: 'SMS 3500 30days', code: 'SMS3500_30D', amount: 201, sms: 3500, category: 'sms', ussd: '*180*201#' },
-            { name: 'Voice 45min 3hrs', code: 'VOICE45_3H', amount: 23, sms: 45, category: 'voice', ussd: '*180*23#' },
-            { name: 'Voice 50min TillMidnight', code: 'VOICE50_TM', amount: 52, sms: 50, category: 'voice', ussd: '*180*52#' },
-            { name: 'Monthly 300min 30days', code: 'MONTHLY300', amount: 499, sms: 300, category: 'voice', ussd: '*180*499#' },
-            { name: 'Monthly 1250min 30days', code: 'MONTHLY1250', amount: 1000, sms: 1250, category: 'voice', ussd: '*180*1000#' },
-            { name: 'Monthly 8GB+400min', code: 'MONTHLY8G_400', amount: 999, sms: 400, category: 'bundle', ussd: '*180*999#' },
-        ];
+        const SUPABASE_URL = 'https://wflaubcwpnagrmecalex.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndmbGF1YmN3cG5hZ3JtZWNhbGV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQzNzU4MTgsImV4cCI6MjA5OTk1MTgxOH0.sd5pDGNiBRrjmPW-DqnrJ0KIb7jo7Jb4MlAvpvxoFYc';
 
-        const historyData = [
-            { date: '18 July 2026', package: 'Data 2GB 24hrs', amount: 'KES 110', status: 'success' },
-            { date: '17 July 2026', package: 'Airtime', amount: 'KES 200', status: 'success' },
-            { date: '16 July 2026', package: 'SMS 1000 7days', amount: 'KES 30', status: 'pending' },
-            { date: '15 July 2026', package: 'Voice 50min TillMidnight', amount: 'KES 52', status: 'success' },
-            { date: '14 July 2026', package: 'Data 1GB 24hrs', amount: 'KES 99', status: 'success' },
-            { date: '13 July 2026', package: 'Gift - SMS 200', amount: 'KES 10', status: 'success' },
-        ];
-
+        let supabase = null;
         let currentUser = null;
+        let currentSession = null;
+        let allPackages = [];
+        let allTransactions = [];
+        let allMessages = [];
+
+        // ============================================
+        // INIT SUPABASE
+        // ============================================
+        function initSupabase() {
+            try {
+                supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+                console.log('✅ Supabase initialized');
+                return true;
+            } catch (e) {
+                console.error('❌ Supabase init error:', e);
+                return false;
+            }
+        }
+        initSupabase();
+
+        // ============================================
+        // CHECK SESSION
+        // ============================================
+        async function checkSession() {
+            try {
+                const { data: { session }, error } = await supabase.auth.getSession();
+                if (error) throw error;
+                if (session) {
+                    currentSession = session;
+                    currentUser = session.user;
+                    showApp();
+                    loadUserData();
+                    return true;
+                }
+                return false;
+            } catch (e) {
+                console.error('Session check error:', e);
+                return false;
+            }
+        }
 
         // ============================================
         // AUTH
@@ -1017,65 +1064,506 @@
             document.getElementById('registerPage').style.display = page === 'register' ? 'block' : 'none';
         }
 
-        function handleLogin() {
+        async function handleLogin() {
             const email = document.getElementById('loginEmail').value.trim();
             const password = document.getElementById('loginPassword').value.trim();
-            if (!email || !password) { showToast('Please fill all fields'); return; }
 
-            if (email === 'test@bingwa.com' && password === 'password123') {
-                currentUser = { email: 'test@bingwa.com', id: '123' };
+            if (!email || !password) {
+                showToast('Please fill all fields');
+                return;
+            }
+
+            try {
+                const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+                if (error) throw error;
+
+                currentUser = data.user;
+                currentSession = data.session;
                 showApp();
+                loadUserData();
                 showToast('Welcome back!');
-            } else {
-                showToast('Invalid credentials. Use test@bingwa.com / password123');
+            } catch (e) {
+                showToast('Login error: ' + e.message);
             }
         }
 
-        function handleRegister() {
+        async function handleRegister() {
             const username = document.getElementById('regUsername').value.trim();
             const email = document.getElementById('regEmail').value.trim();
             const phone = document.getElementById('regPhone').value.trim();
             const password = document.getElementById('regPassword').value.trim();
             const confirm = document.getElementById('regConfirm').value.trim();
 
-            if (!username || !email || !phone || !password) { showToast('Please fill all fields'); return; }
-            if (password !== confirm) { showToast('Passwords do not match'); return; }
-            if (password.length < 6) { showToast('Password must be at least 6 characters'); return; }
+            if (!username || !email || !phone || !password) {
+                showToast('Please fill all fields');
+                return;
+            }
+            if (password !== confirm) {
+                showToast('Passwords do not match');
+                return;
+            }
+            if (password.length < 6) {
+                showToast('Password must be at least 6 characters');
+                return;
+            }
 
-            showToast('Registration successful! Please login.');
-            showAuth('login');
-            document.getElementById('loginEmail').value = email;
+            try {
+                const { data, error } = await supabase.auth.signUp({
+                    email,
+                    password,
+                    options: {
+                        data: {
+                            username: username,
+                            phone: phone
+                        }
+                    }
+                });
+                if (error) throw error;
+
+                // Create profile
+                await supabase.from('profiles').insert({
+                    id: data.user.id,
+                    username: username,
+                    email: email,
+                    phone: phone,
+                    balance: 0
+                });
+
+                showToast('Registration successful! Please login.');
+                showAuth('login');
+                document.getElementById('loginEmail').value = email;
+            } catch (e) {
+                showToast('Registration error: ' + e.message);
+            }
         }
 
+        // ============================================
+        // APP STATE
+        // ============================================
         function showApp() {
             document.getElementById('authContainer').style.display = 'none';
             document.getElementById('appContainer').style.display = 'block';
             updateUI();
-            renderPackages();
-            renderHistory('all');
+
+            // Show permission banner
+            setTimeout(() => {
+                document.getElementById('permissionBanner').classList.add('show');
+            }, 500);
         }
 
         function updateUI() {
-            const name = currentUser?.email?.split('@')[0] || 'Bingwa Member';
+            if (!currentUser) return;
+            const name = currentUser.user_metadata?.username || currentUser.email?.split('@')[0] || 'Bingwa Member';
             const initial = name.charAt(0).toUpperCase();
 
             document.getElementById('dashName').textContent = name;
             document.getElementById('dashAvatar').textContent = initial;
+            document.getElementById('dashEmail').textContent = currentUser.email;
+
             document.getElementById('sideName').textContent = name;
             document.getElementById('sideAvatar').textContent = initial;
+            document.getElementById('sideEmail').textContent = currentUser.email;
+
             document.getElementById('profName').textContent = name;
             document.getElementById('profAvatar').textContent = initial;
-            document.getElementById('profEmail').textContent = currentUser?.email || 'bingwa@email.com';
+            document.getElementById('profEmail').textContent = currentUser.email;
+            document.getElementById('profPhone').textContent = currentUser.user_metadata?.phone || '+254 700 000 000';
         }
 
-        function logout() {
+        async function logout() {
             if (confirm('Logout?')) {
+                await supabase.auth.signOut();
                 currentUser = null;
+                currentSession = null;
                 document.getElementById('appContainer').style.display = 'none';
                 document.getElementById('authContainer').style.display = 'block';
                 showAuth('login');
                 showToast('Logged out');
             }
+        }
+
+        // ============================================
+        // LOAD USER DATA
+        // ============================================
+        async function loadUserData() {
+            if (!currentUser) return;
+
+            try {
+                // Load profile
+                const { data: profile } = await supabase
+                    .from('profiles')
+                    .select('*')
+                    .eq('id', currentUser.id)
+                    .single();
+
+                if (profile) {
+                    document.getElementById('walletBalance').textContent = `KES ${profile.balance?.toFixed(2) || '0.00'}`;
+                    document.getElementById('memberSince').textContent = new Date(profile.created_at).toLocaleDateString();
+                }
+
+                // Load transactions
+                const { data: transactions } = await supabase
+                    .from('transactions')
+                    .select('*')
+                    .eq('user_id', currentUser.id)
+                    .order('created_at', { ascending: false });
+
+                allTransactions = transactions || [];
+                renderTransactions();
+                renderHistory('all');
+
+                // Load packages
+                const { data: packages } = await supabase
+                    .from('packages')
+                    .select('*')
+                    .eq('is_active', true)
+                    .order('amount');
+
+                allPackages = packages || [];
+                renderPackages();
+
+                // Update stats
+                const total = allTransactions.length;
+                const success = allTransactions.filter(t => t.status === 'success').length;
+                const pending = allTransactions.filter(t => t.status === 'pending').length;
+                const expiring = allTransactions.filter(t => {
+                    if (!t.expires_at) return false;
+                    const days = (new Date(t.expires_at) - new Date()) / (1000 * 60 * 60 * 24);
+                    return days <= 3 && days >= 0;
+                }).length;
+
+                document.getElementById('statTotal').textContent = total;
+                document.getElementById('statActive').textContent = success;
+                document.getElementById('statPending').textContent = pending;
+                document.getElementById('statExpiring').textContent = expiring;
+
+            } catch (e) {
+                console.error('Error loading user data:', e);
+            }
+        }
+
+        // ============================================
+        // RENDER TRANSACTIONS
+        // ============================================
+        function renderTransactions() {
+            const tbody = document.getElementById('recentTbody');
+            const recent = allTransactions.slice(0, 5);
+
+            if (recent.length === 0) {
+                tbody.innerHTML =
+                    '<tr><td colspan="4" style="text-align:center;color:var(--white-darker);padding:20px;">No transactions</td></tr>';
+                return;
+            }
+
+            let html = '';
+            recent.forEach(t => {
+                const statusClass = t.status === 'success' ? 'status-success' : t.status === 'pending' ?
+                    'status-pending' : 'status-failed';
+                const icon = t.status === 'success' ? '✅' : t.status === 'pending' ? '⏳' : '❌';
+                html += `<tr>
+                    <td>${new Date(t.created_at).toLocaleDateString()}</td>
+                    <td>${t.package_name || 'Unknown'}</td>
+                    <td>KES ${t.amount}</td>
+                    <td><span class="${statusClass}">${icon} ${t.status.charAt(0).toUpperCase() + t.status.slice(1)}</span></td>
+                </tr>`;
+            });
+            tbody.innerHTML = html;
+        }
+
+        // ============================================
+        // RENDER PACKAGES
+        // ============================================
+        function renderPackages() {
+            const container = document.getElementById('packagesList');
+            const search = document.getElementById('searchPackages')?.value?.toLowerCase() || '';
+
+            let filtered = allPackages;
+            if (search) {
+                filtered = filtered.filter(p =>
+                    p.name.toLowerCase().includes(search) ||
+                    p.code.toLowerCase().includes(search)
+                );
+            }
+
+            if (filtered.length === 0) {
+                container.innerHTML = '<p style="text-align:center;color:var(--white-darker);padding:30px 0;">No packages found</p>';
+                return;
+            }
+
+            let html = '';
+            filtered.forEach(p => {
+                const colors = { data: '#1A237E', sms: '#4CAF50', voice: '#FF9800', bundle: '#9C27B0' };
+                html += `
+                    <div class="package-item">
+                        <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+                            <div>
+                                <strong style="color:var(--white);font-size:15px;">${p.name}</strong>
+                                <div style="font-size:12px;color:var(--white-darker);">Code: ${p.code}</div>
+                                <div style="font-size:12px;color:var(--gold);">USSD: ${p.ussd_code}</div>
+                            </div>
+                            <div style="text-align:right;">
+                                <div style="color:var(--white);font-weight:900;font-size:18px;">KES ${p.amount}</div>
+                                <div style="font-size:12px;color:var(--white-darker);">${p.sms_count || 0} ${p.category === 'voice' ? 'Minutes' : 'SMS'}</div>
+                                <span style="padding:2px 10px;border-radius:10px;font-size:9px;font-weight:800;background:${colors[p.category] || '#666'};color:white;text-transform:uppercase;">${p.category || 'general'}</span>
+                            </div>
+                        </div>
+                        <button class="buy-btn" onclick="purchasePackage('${p.id}')">Buy Now</button>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+        }
+
+        // ============================================
+        // PURCHASE PACKAGE
+        // ============================================
+        function purchasePackage(packageId) {
+            const pkg = allPackages.find(p => p.id === packageId);
+            if (pkg) {
+                document.getElementById('ussdCode').value = pkg.ussd_code || '*180*' + pkg.amount + '#';
+                document.getElementById('ussdAmount').value = pkg.amount;
+                showPage('ussd');
+                showToast(`Selected ${pkg.name} - KES ${pkg.amount}`);
+            }
+        }
+
+        // ============================================
+        // USSD
+        // ============================================
+        async function runUSSD() {
+            const code = document.getElementById('ussdCode').value;
+            const phone = document.getElementById('ussdPhone').value;
+            const amount = parseInt(document.getElementById('ussdAmount').value);
+
+            const respDiv = document.getElementById('ussdResponse');
+            const resultDiv = document.getElementById('ussdResult');
+
+            respDiv.style.display = 'block';
+            resultDiv.innerHTML = `
+                <div style="padding:12px;background:rgba(76,175,80,0.15);border-radius:8px;color:#4CAF50;font-weight:800;">✅ USSD Request Sent!</div>
+                <div style="padding:12px;background:rgba(255,255,255,0.05);border-radius:8px;margin-top:8px;">
+                    <div><strong>USSD:</strong> ${code}</div>
+                    <div><strong>Phone:</strong> ${phone}</div>
+                    <div><strong>Amount:</strong> KES ${amount}</div>
+                </div>
+            `;
+
+            // Save transaction
+            try {
+                const { data, error } = await supabase
+                    .from('transactions')
+                    .insert({
+                        user_id: currentUser.id,
+                        phone: phone,
+                        amount: amount,
+                        package_id: null,
+                        package_name: 'USSD Purchase',
+                        status: 'pending',
+                        created_at: new Date().toISOString()
+                    });
+
+                if (!error) {
+                    showToast('Transaction recorded');
+                }
+            } catch (e) {
+                console.error('Transaction save error:', e);
+            }
+
+            setTimeout(() => {
+                resultDiv.innerHTML = `
+                    <div style="padding:12px;background:rgba(76,175,80,0.2);border-radius:8px;color:#4CAF50;font-weight:900;">✅ Purchase Successful!</div>
+                    <div style="padding:12px;background:rgba(255,255,255,0.05);border-radius:8px;margin-top:8px;">
+                        <div><strong>USSD:</strong> ${code}</div>
+                        <div><strong>Phone:</strong> ${phone}</div>
+                        <div><strong>Amount:</strong> KES ${amount}</div>
+                        <div style="color:var(--white-darker);margin-top:4px;">Transaction ID: TXN${Math.floor(Math.random() * 100000)}</div>
+                    </div>
+                `;
+                loadUserData();
+                showToast('✅ Purchase completed!');
+            }, 3000);
+        }
+
+        // ============================================
+        // MESSAGES
+        // ============================================
+        function simulateMessage() {
+            const senders = ['+254 712 345 678', '+254 723 456 789', '+254 734 567 890'];
+            const msgs = [
+                'KES 5 received. Package: SMS20 activated.',
+                'KES 20 received. Package: DATA250 activated.',
+                'KES 55 received. Package: DATA1_25G activated.',
+                'KES 110 received. Package: DATA2G_24H activated.'
+            ];
+
+            const container = document.getElementById('messagesList');
+            const sender = senders[Math.floor(Math.random() * senders.length)];
+            const body = msgs[Math.floor(Math.random() * msgs.length)];
+
+            // Remove empty state
+            if (container.querySelector('div[style]')) {
+                container.innerHTML = '';
+            }
+
+            const msg = document.createElement('div');
+            msg.className = 'message-box';
+            msg.innerHTML = `
+                <span class="sender">📱 ${sender}</span>
+                <span class="time">Just now</span>
+                <div class="body">${body}</div>
+            `;
+            container.insertBefore(msg, container.firstChild);
+
+            // Auto-detect and save
+            const amountMatch = body.match(/KES (\d+)/);
+            if (amountMatch) {
+                const amount = parseInt(amountMatch[1]);
+                const pkg = allPackages.find(p => p.amount === amount);
+                if (pkg) {
+                    showToast(`🔔 Detected: ${pkg.name} purchased!`);
+                    // Save to Supabase
+                    supabase.from('transactions').insert({
+                        user_id: currentUser.id,
+                        phone: sender.replace(/\D/g, ''),
+                        amount: amount,
+                        package_id: pkg.id,
+                        package_name: pkg.name,
+                        status: 'success',
+                        created_at: new Date().toISOString()
+                    }).then(() => loadUserData());
+                }
+            }
+
+            showToast('📩 New message detected!');
+        }
+
+        // ============================================
+        // HISTORY
+        // ============================================
+        function renderHistory(filter) {
+            const tbody = document.getElementById('historyTbody');
+
+            let filtered = allTransactions;
+            if (filter !== 'all') {
+                // Try to filter by category from packages
+                filtered = filtered.filter(t => {
+                    const pkg = allPackages.find(p => p.id === t.package_id);
+                    return pkg && pkg.category === filter;
+                });
+            }
+
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            const active = document.querySelector(`.filter-btn[onclick*="${filter}"]`);
+            if (active) active.classList.add('active');
+
+            if (filtered.length === 0) {
+                tbody.innerHTML =
+                    '<tr><td colspan="4" style="text-align:center;color:var(--white-darker);padding:20px;">No history</td></tr>';
+                return;
+            }
+
+            let html = '';
+            filtered.slice(0, 20).forEach(t => {
+                const cls = t.status === 'success' ? 'status-success' : t.status === 'pending' ? 'status-pending' :
+                    'status-failed';
+                const icon = t.status === 'success' ? '✅' : t.status === 'pending' ? '⏳' : '❌';
+                html += `<tr>
+                    <td>${new Date(t.created_at).toLocaleDateString()}</td>
+                    <td>${t.package_name || 'Unknown'}</td>
+                    <td>KES ${t.amount}</td>
+                    <td><span class="${cls}">${icon} ${t.status.charAt(0).toUpperCase() + t.status.slice(1)}</span></td>
+                </tr>`;
+            });
+            tbody.innerHTML = html;
+        }
+
+        function filterHistory(f) { renderHistory(f); }
+
+        // ============================================
+        // PERMISSIONS
+        // ============================================
+        function requestPermissions() {
+            if ('Notification' in window && Notification.permission === 'default') {
+                Notification.requestPermission().then(permission => {
+                    if (permission === 'granted') {
+                        showToast('✅ Notifications enabled!');
+                    }
+                });
+            }
+
+            // Request SMS permission (web doesn't have direct SMS access)
+            // This is for demo purposes - shows we're handling permissions
+            if ('permissions' in navigator) {
+                navigator.permissions.query({ name: 'notifications' }).then(result => {
+                    console.log('Notification permission:', result.state);
+                });
+            }
+
+            // Try to use SMS Retriever API (Android/Chrome only)
+            if ('sms' in navigator) {
+                navigator.sms.requestPermission().then(status => {
+                    console.log('SMS permission:', status);
+                    showToast('📱 SMS detection enabled!');
+                });
+            }
+
+            document.getElementById('permissionBanner').classList.remove('show');
+            showToast('✅ Permissions granted!');
+        }
+
+        function dismissPermissions() {
+            document.getElementById('permissionBanner').classList.remove('show');
+        }
+
+        // ============================================
+        // SETTINGS
+        // ============================================
+        function saveSettings() {
+            const ussd = document.getElementById('settingUSSD').value;
+            const pin = document.getElementById('settingPIN').value;
+
+            // Save to localStorage
+            localStorage.setItem('bingwa_settings', JSON.stringify({
+                ussd_code: ussd,
+                ussd_pin: pin,
+                purchase_alerts: document.getElementById('togglePurchase').checked,
+                expiry_reminders: document.getElementById('toggleExpiry').checked,
+                promo_offers: document.getElementById('togglePromo').checked
+            }));
+
+            showToast(`Settings saved! USSD: ${ussd}`);
+        }
+
+        function loadSettings() {
+            try {
+                const data = JSON.parse(localStorage.getItem('bingwa_settings'));
+                if (data) {
+                    document.getElementById('settingUSSD').value = data.ussd_code || '*180*';
+                    document.getElementById('settingPIN').value = data.ussd_pin || '1234';
+                    document.getElementById('togglePurchase').checked = data.purchase_alerts !== false;
+                    document.getElementById('toggleExpiry').checked = data.expiry_reminders !== false;
+                    document.getElementById('togglePromo').checked = data.promo_offers !== false;
+                }
+            } catch (e) {}
+        }
+
+        // ============================================
+        // TOAST
+        // ============================================
+        function showToast(msg) {
+            const existing = document.querySelector('.toast');
+            if (existing) existing.remove();
+
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.innerHTML =
+                `<i class="fas fa-info-circle"></i> ${msg} <span onclick="this.parentElement.remove()" style="cursor:pointer;margin-left:12px;">✕</span>`;
+            document.body.appendChild(toast);
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transition = 'opacity 0.5s';
+                setTimeout(() => toast.remove(), 500);
+            }, 4000);
         }
 
         // ============================================
@@ -1103,176 +1591,16 @@
         }
 
         // ============================================
-        // PACKAGES
-        // ============================================
-        function renderPackages(filter = 'all') {
-            const container = document.getElementById('packagesList');
-            const search = document.getElementById('searchPackages')?.value?.toLowerCase() || '';
-
-            let filtered = packagesData;
-            if (filter !== 'all') filtered = filtered.filter(p => p.category === filter);
-            if (search) filtered = filtered.filter(p => p.name.toLowerCase().includes(search) || p.code.toLowerCase().includes(
-                search));
-
-            let html = '';
-            filtered.forEach(p => {
-                const colors = { data: '#1A237E', sms: '#4CAF50', voice: '#FF9800', bundle: '#9C27B0' };
-                html += `
-                    <div class="package-item">
-                        <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;">
-                            <div>
-                                <strong style="color:var(--white);font-size:15px;">${p.name}</strong>
-                                <div style="font-size:12px;color:var(--white-darker);">Code: ${p.code}</div>
-                                <div style="font-size:12px;color:var(--gold);">USSD: ${p.ussd}</div>
-                            </div>
-                            <div style="text-align:right;">
-                                <div style="color:var(--white);font-weight:900;font-size:18px;">KES ${p.amount}</div>
-                                <div style="font-size:12px;color:var(--white-darker);">${p.sms} ${p.category === 'voice' ? 'Minutes' : 'SMS'}</div>
-                                <span style="padding:2px 10px;border-radius:10px;font-size:9px;font-weight:800;background:${colors[p.category]};color:white;text-transform:uppercase;">${p.category}</span>
-                            </div>
-                        </div>
-                        <button class="buy-btn" onclick="purchasePackage('${p.code}')">Buy Now</button>
-                    </div>
-                `;
-            });
-            if (!filtered.length) html = '<p style="text-align:center;color:var(--white-darker);padding:30px 0;">No packages found</p>';
-            container.innerHTML = html;
-        }
-
-        function purchasePackage(code) {
-            const pkg = packagesData.find(p => p.code === code);
-            if (pkg) {
-                document.getElementById('ussdCode').value = pkg.ussd;
-                document.getElementById('ussdAmount').value = pkg.amount;
-                showPage('ussd');
-                showToast(`Selected ${pkg.name} - KES ${pkg.amount}`);
-            }
-        }
-
-        // ============================================
-        // USSD
-        // ============================================
-        function runUSSD() {
-            const code = document.getElementById('ussdCode').value;
-            const phone = document.getElementById('ussdPhone').value;
-            const amount = document.getElementById('ussdAmount').value;
-
-            const respDiv = document.getElementById('ussdResponse');
-            const resultDiv = document.getElementById('ussdResult');
-
-            respDiv.style.display = 'block';
-            resultDiv.innerHTML = `
-                <div style="padding:12px;background:rgba(76,175,80,0.15);border-radius:8px;color:#4CAF50;font-weight:800;">✅ USSD Request Sent!</div>
-                <div style="padding:12px;background:rgba(255,255,255,0.05);border-radius:8px;margin-top:8px;">
-                    <div><strong>USSD:</strong> ${code}</div>
-                    <div><strong>Phone:</strong> ${phone}</div>
-                    <div><strong>Amount:</strong> KES ${amount}</div>
-                    <div style="color:var(--white-darker);margin-top:4px;"><i class="fas fa-clock"></i> Processing...</div>
-                </div>
-            `;
-
-            setTimeout(() => {
-                resultDiv.innerHTML = `
-                    <div style="padding:12px;background:rgba(76,175,80,0.2);border-radius:8px;color:#4CAF50;font-weight:900;">✅ Purchase Successful!</div>
-                    <div style="padding:12px;background:rgba(255,255,255,0.05);border-radius:8px;margin-top:8px;">
-                        <div><strong>USSD:</strong> ${code}</div>
-                        <div><strong>Phone:</strong> ${phone}</div>
-                        <div><strong>Amount:</strong> KES ${amount}</div>
-                        <div style="color:var(--white-darker);margin-top:4px;">Transaction ID: TXN${Math.floor(Math.random() * 100000)}</div>
-                    </div>
-                `;
-            }, 2500);
-        }
-
-        // ============================================
-        // MESSAGES
-        // ============================================
-        function simulateMessage() {
-            const senders = ['+254 712 345 678', '+254 723 456 789', '+254 734 567 890'];
-            const msgs = [
-                'KES 5 received. Package: SMS20 activated.',
-                'KES 20 received. Package: DATA250 activated.',
-                'KES 55 received. Package: DATA1_25G activated.',
-                'KES 110 received. Package: DATA2G_24H activated.'
-            ];
-            const container = document.getElementById('messagesList');
-            const msg = document.createElement('div');
-            msg.className = 'message-box';
-            const sender = senders[Math.floor(Math.random() * senders.length)];
-            const body = msgs[Math.floor(Math.random() * msgs.length)];
-            msg.innerHTML = `
-                <span class="sender">📱 ${sender}</span>
-                <span class="time">Just now</span>
-                <div class="body">${body}</div>
-            `;
-            container.insertBefore(msg, container.firstChild);
-            showToast('📩 New message detected!');
-        }
-
-        // ============================================
-        // HISTORY
-        // ============================================
-        function renderHistory(filter) {
-            const tbody = document.getElementById('historyTbody');
-            let filtered = historyData;
-            if (filter !== 'all') {
-                filtered = filtered.filter(h => {
-                    const pkg = packagesData.find(p => p.name === h.package);
-                    return pkg && pkg.category === filter;
-                });
-            }
-
-            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-            const active = document.querySelector(`.filter-btn[onclick*="${filter}"]`);
-            if (active) active.classList.add('active');
-
-            let html = '';
-            filtered.forEach(h => {
-                const cls = h.status === 'success' ? 'status-success' : 'status-pending';
-                const icon = h.status === 'success' ? '✅' : '⏳';
-                html += `<tr><td>${h.date}</td><td>${h.package}</td><td>${h.amount}</td><td><span class="${cls}">${icon} ${h.status.charAt(0).toUpperCase() + h.status.slice(1)}</span></td></tr>`;
-            });
-            if (!filtered.length) html =
-                `<tr><td colspan="4" style="text-align:center;color:var(--white-darker);padding:20px 0;">No history</td></tr>`;
-            tbody.innerHTML = html;
-        }
-
-        function filterHistory(f) { renderHistory(f); }
-
-        // ============================================
-        // SETTINGS
-        // ============================================
-        function saveSettings() {
-            const ussd = document.getElementById('settingUSSD').value;
-            const pin = document.getElementById('settingPIN').value;
-            showToast(`Settings saved! USSD: ${ussd}, PIN: ${pin.replace(/\d/g, '*')}`);
-        }
-
-        // ============================================
-        // TOAST
-        // ============================================
-        function showToast(msg) {
-            const existing = document.querySelector('.toast');
-            if (existing) existing.remove();
-
-            const toast = document.createElement('div');
-            toast.className = 'toast';
-            toast.innerHTML =
-                `<i class="fas fa-info-circle"></i> ${msg} <span onclick="this.parentElement.remove()" style="cursor:pointer;margin-left:12px;">✕</span>`;
-            document.body.appendChild(toast);
-            setTimeout(() => { toast.style.opacity = '0';
-                toast.style.transition = 'opacity 0.5s';
-                setTimeout(() => toast.remove(), 500); }, 3500);
-        }
-
-        // ============================================
         // SEARCH
         // ============================================
         document.addEventListener('DOMContentLoaded', function() {
             const search = document.getElementById('searchPackages');
-            if (search) search.addEventListener('input', () => renderPackages('all'));
-            renderPackages();
-            renderHistory('all');
+            if (search) search.addEventListener('input', () => renderPackages());
+
+            loadSettings();
+
+            // Check if user already logged in
+            checkSession();
         });
     </script>
 
